@@ -1,5 +1,5 @@
 //
-//  Extensions.swift
+//  Components+Ext.swift
 //  MemoryMaze
 //
 //  Created by Diggo Silva on 15/01/25.
@@ -35,6 +35,27 @@ extension UIView {
         return sv
     }
     
+    func createResetButton() -> UIButton {
+        var configuration = UIButton.Configuration.filled()
+        configuration.title = "Novo Jogo"
+        configuration.baseBackgroundColor = DSColor.secondaryColor
+        configuration.baseForegroundColor = DSColor.primaryColor
+        configuration.cornerStyle = .capsule
+        
+        let btn = UIButton(configuration: configuration)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        applyShadow(view: btn)
+        return btn
+    }
+    
+    func createLabelScore() -> UILabel {
+        let lbl = UILabel()
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        lbl.text = "Pontos: "
+        lbl.font = .preferredFont(forTextStyle: .headline)
+        return lbl
+    }
+    
     func applyShadow(view: UIView) {
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOffset = CGSize(width: 5, height: 5)
@@ -42,27 +63,3 @@ extension UIView {
         view.layer.shadowRadius = 5.0 // default 3.0
     }
 }
-
-final class DSColor {
-    static let primaryColor = UIColor.systemBackground
-    static let secondaryColor  = UIColor.systemOrange
-}
-
-
-enum Emojis {
-    case natal([String])
-    case halloween([String])
-    
-    func emojis() -> [String] {
-        switch self {
-        case .natal(let emojis):
-            return emojis
-        case .halloween(let emojis):
-            return emojis
-        }
-    }
-}
-
-// Definindo os arrays de emojis para cada tema
-let natalEmojis = Emojis.natal(["🎄", "🎅", "❄️", "⛄", "🎁", "🌟", "🕯️", "🍪"])
-let halloweenEmojis = Emojis.halloween(["🎃", "👻", "🕸️", "🕷️", "💀", "🧛‍♂️", "🧙‍♀️", "🧟‍♀️"])
