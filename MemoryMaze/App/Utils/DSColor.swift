@@ -8,8 +8,8 @@
 import UIKit
 
 final class DSColor {
-    static let primaryColor = UIColor.systemBackground
-    static let secondaryColor = UIColor.systemOrange
+    static let primaryColor = UIColor.systemOrange
+    static let secondaryColor = UIColor.systemBackground
 }
 
 
@@ -28,5 +28,5 @@ enum Emojis {
 }
 
 // Definindo os arrays de emojis para cada tema
-let natalEmojis = Emojis.natal(["🎄", "🎅", "❄️", "⛄", "🎁", "🌟", "🕯️", "🍪"])
-let halloweenEmojis = Emojis.halloween(["🎃", "👻", "🕸️", "🕷️", "💀", "🧛‍♂️", "🧙‍♀️", "🧟‍♀️"])
+let natal = Emojis.natal(["🎄", "🎅", "❄️", "⛄", "🎁", "🌟", "🕯️", "🍪"])
+let halloween = Emojis.halloween(["🎃", "👻", "🕸️", "🕷️", "💀", "🧛‍♂️", "🧙‍♀️", "🧟‍♀️"])
