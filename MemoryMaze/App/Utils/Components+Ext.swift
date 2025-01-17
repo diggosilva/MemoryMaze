@@ -15,14 +15,13 @@ extension UIView {
     func createButton(tag: Int, addTarget: Selector) -> UIButton {
         let btn = UIButton(type: .system)
         btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.backgroundColor = DSColor.secondaryColor
-        btn.setImage(UIImage(systemName: "swift")?.withTintColor(DSColor.primaryColor, renderingMode: .alwaysOriginal), for: .normal)
+        btn.backgroundColor = DSColor.primaryColor
+        btn.setImage(UIImage(systemName: "swift")?.withTintColor(DSColor.secondaryColor, renderingMode: .alwaysOriginal), for: .normal)
         btn.setTitle("", for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: 50)
         btn.tag = tag
         btn.layer.cornerRadius = 10
         btn.addTarget(self, action: addTarget, for: .touchUpInside)
-        applyShadow(view: btn)
         return btn
     }
     
@@ -36,10 +35,10 @@ extension UIView {
     }
     
     func createResetButton() -> UIButton {
-        var configuration = UIButton.Configuration.filled()
+        var configuration = UIButton.Configuration.bordered()
         configuration.title = "Novo Jogo"
-        configuration.baseBackgroundColor = DSColor.secondaryColor
-        configuration.baseForegroundColor = DSColor.primaryColor
+        configuration.baseBackgroundColor = DSColor.primaryColor
+        configuration.baseForegroundColor = .white
         configuration.cornerStyle = .capsule
         
         let btn = UIButton(configuration: configuration)
