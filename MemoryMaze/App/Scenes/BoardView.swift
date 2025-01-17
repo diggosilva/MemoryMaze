@@ -8,50 +8,107 @@
 import UIKit
 
 class BoardView: UIView {
-    lazy var scoreLabel = createLabelScore()
-    
-    lazy var button1 = createButton(tag: 1, addTarget: #selector(buttonTapped))
-    lazy var button2 = createButton(tag: 2, addTarget: #selector(buttonTapped))
-    lazy var button3 = createButton(tag: 3, addTarget: #selector(buttonTapped))
-    lazy var button4 = createButton(tag: 4, addTarget: #selector(buttonTapped))
+    lazy var button1 = createButton(tag: 1, addTarget: #selector(flipCardUp))
+    lazy var button2 = createButton(tag: 2, addTarget: #selector(flipCardUp))
+    lazy var button3 = createButton(tag: 3, addTarget: #selector(flipCardUp))
+    lazy var button4 = createButton(tag: 4, addTarget: #selector(flipCardUp))
     lazy var HStack1 = createStack(arrangedSubviews: [button1, button2, button3, button4])
     
-    lazy var button5 = createButton(tag: 5, addTarget: #selector(buttonTapped))
-    lazy var button6 = createButton(tag: 6, addTarget: #selector(buttonTapped))
-    lazy var button7 = createButton(tag: 7, addTarget: #selector(buttonTapped))
-    lazy var button8 = createButton(tag: 8, addTarget: #selector(buttonTapped))
+    lazy var button5 = createButton(tag: 5, addTarget: #selector(flipCardUp))
+    lazy var button6 = createButton(tag: 6, addTarget: #selector(flipCardUp))
+    lazy var button7 = createButton(tag: 7, addTarget: #selector(flipCardUp))
+    lazy var button8 = createButton(tag: 8, addTarget: #selector(flipCardUp))
     lazy var HStack2 = createStack(arrangedSubviews: [button5, button6, button7, button8])
     
-    lazy var button9 = createButton(tag: 9, addTarget: #selector(buttonTapped))
-    lazy var button10 = createButton(tag: 10, addTarget: #selector(buttonTapped))
-    lazy var button11 = createButton(tag: 11, addTarget: #selector(buttonTapped))
-    lazy var button12 = createButton(tag: 12, addTarget: #selector(buttonTapped))
-    lazy var HStack3 = createStack(arrangedSubviews: [button9, button10, button11, button12])
+    lazy var button9 = createButton(tag: 9, addTarget: #selector(flipCardUp))
+    lazy var button10 = createButton(tag: 10, addTarget: #selector(flipCardUp))
+    lazy var button11 = createButton(tag: 11, addTarget: #selector(flipCardUp))
+    lazy var button12 = createButton(tag: 12, addTarget: #selector(flipCardUp))
+    lazy var HStack3  = createStack(arrangedSubviews: [button9, button10, button11, button12])
     
-    lazy var button13 = createButton(tag: 13, addTarget: #selector(buttonTapped))
-    lazy var button14 = createButton(tag: 14, addTarget: #selector(buttonTapped))
-    lazy var button15 = createButton(tag: 15, addTarget: #selector(buttonTapped))
-    lazy var button16 = createButton(tag: 16, addTarget: #selector(buttonTapped))
-    lazy var HStack4 = createStack(arrangedSubviews: [button13, button14, button15, button16])
-    
+    lazy var button13 = createButton(tag: 13, addTarget: #selector(flipCardUp))
+    lazy var button14 = createButton(tag: 14, addTarget: #selector(flipCardUp))
+    lazy var button15 = createButton(tag: 15, addTarget: #selector(flipCardUp))
+    lazy var button16 = createButton(tag: 16, addTarget: #selector(flipCardUp))
+    lazy var HStack4  = createStack(arrangedSubviews: [button13, button14, button15, button16])
     lazy var VStack = createStack(arrangedSubviews: [HStack1, HStack2, HStack3, HStack4], axis: .vertical)
     
-    lazy var heightButtons: CGFloat = CGFloat(VStack.arrangedSubviews.count) * 110
-    lazy var buttons: [UIButton] = [button1, button2, button3, button4, button5, button6, button7, button8]
-    
+    lazy var scoreLabel = createLabelScore()
     lazy var resetButton = createResetButton()
+    
+    lazy var heightButtons: CGFloat = CGFloat(VStack.arrangedSubviews.count) * 110
+    lazy var buttons: [UIButton] = [button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button12, button13, button14, button15, button16]
+    lazy var emojis: [String] = []
+    let emojisDB: [String] = halloween.emojis()
+    
+    var flipped2Cards: [UIButton] = []
+    var score: Int = 0
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
         setupView()
+        shuffledEmojis()
+        applyShadow(view: VStack)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    
+    private func shuffledEmojis() {
+        emojis = (emojisDB + emojisDB).shuffled()
+        print(emojis)
     }
     
-    @objc private func buttonTapped(_ button: UIButton) {
-        print("Botão \(button.tag)")
+    @objc private func flipCardUp(_ button: UIButton) {
+        let transitionOptions: UIView.AnimationOptions = [.transitionFlipFromRight, .curveEaseInOut]
+        
+        UIView.transition(with: button, duration: 0.6, options: transitionOptions) {
+            button.backgroundColor = .white
+            button.setImage(nil, for: .normal)
+            button.setTitle(self.emojis[button.tag - 1], for: .normal)
+            button.layer.borderWidth = 2
+            button.layer.borderColor = DSColor.primaryColor.cgColor
+            button.isEnabled = false
+        }
+        flipped2Cards.append(button)
+        
+        if flipped2Cards.count == 2 {
+            checkForMatch()
+        }
+    }
+    
+    private func checkForMatch() {
+        flipped2Cards.first?.currentTitle == flipped2Cards.last?.currentTitle ? self.animateAlpha(alpha: 0) : flipCardDown()
+        flipped2Cards = []
+    }
+    
+    private func flipCardDown() {
+        guard let firstCard = flipped2Cards.first, let secondCard = flipped2Cards.last else { return }
+        
+        let transitionOptions: UIView.AnimationOptions = [.transitionFlipFromLeft, .curveEaseInOut]
+        let image = UIImage(systemName: "swift")?.withTintColor(DSColor.secondaryColor, renderingMode: .alwaysOriginal) ?? UIImage()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            self.applyFlipTransition(for: firstCard, with: image, transitionOptions: transitionOptions)
+            self.applyFlipTransition(for: secondCard, with: image, transitionOptions: transitionOptions)
+        }
+    }
+    
+    private func applyFlipTransition(for card: UIButton, with image: UIImage, transitionOptions: UIView.AnimationOptions) {
+        UIView.transition(with: card, duration: 0.6, options: transitionOptions) {
+            card.backgroundColor = DSColor.primaryColor
+            card.setImage(UIImage(systemName: "swift")?.withTintColor(DSColor.secondaryColor, renderingMode: .alwaysOriginal), for: .normal)
+            card.setTitle("", for: .normal)
+            card.isEnabled = true
+        }
+    }
+    
+    private func animateAlpha(alpha: CGFloat) {
+        UIView.animate(withDuration: 1.5) {
+            UIView.animate(withDuration: 0.5) {
+                self.flipped2Cards.first?.alpha = alpha
+                self.flipped2Cards.last?.alpha = alpha
+            }
+        }
     }
     
     private func setupView() {
@@ -60,7 +117,7 @@ class BoardView: UIView {
     }
     
     private func setHierarchy() {
-        backgroundColor = DSColor.primaryColor
+        backgroundColor = DSColor.secondaryColor
         addSubviews([scoreLabel, VStack, resetButton])
     }
     
