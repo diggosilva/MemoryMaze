@@ -34,15 +34,17 @@ extension UIView {
         return sv
     }
     
-    func createResetButton() -> UIButton {
+    func createResetButton(addTarget: Selector) -> UIButton {
         var configuration = UIButton.Configuration.bordered()
         configuration.title = "Novo Jogo"
         configuration.baseBackgroundColor = DSColor.primaryColor
-        configuration.baseForegroundColor = .white
+        configuration.baseForegroundColor = DSColor.secondaryColor
         configuration.cornerStyle = .capsule
         
         let btn = UIButton(configuration: configuration)
         btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.isHidden = true
+        btn.addTarget(self, action: addTarget, for: .touchUpInside)
         applyShadow(view: btn)
         return btn
     }
@@ -50,7 +52,7 @@ extension UIView {
     func createLabelScore() -> UILabel {
         let lbl = UILabel()
         lbl.translatesAutoresizingMaskIntoConstraints = false
-        lbl.text = "Pontos: "
+        lbl.text = "Pontos: 0"
         lbl.font = .preferredFont(forTextStyle: .headline)
         return lbl
     }

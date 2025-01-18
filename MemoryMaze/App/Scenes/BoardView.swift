@@ -7,6 +7,17 @@
 
 import UIKit
 
+protocol BoardViewDelegate: AnyObject {
+    func flipCardUp(_ button: UIButton)
+    func checkForMatch()
+    func isMatch()
+    func checkIfGameEnded()
+    func isNotMatch()
+    func flipCardDown()
+    func applyFlipTransition(for card: UIButton, with image: UIImage, transitionOptions: UIView.AnimationOptions)
+    func animateAlpha(alpha: CGFloat)
+}
+
 class BoardView: UIView {
     lazy var button1 = createButton(tag: 1, addTarget: #selector(flipCardUp))
     lazy var button2 = createButton(tag: 2, addTarget: #selector(flipCardUp))
@@ -34,15 +45,18 @@ class BoardView: UIView {
     lazy var VStack = createStack(arrangedSubviews: [HStack1, HStack2, HStack3, HStack4], axis: .vertical)
     
     lazy var scoreLabel = createLabelScore()
-    lazy var resetButton = createResetButton()
+    lazy var resetButton = createResetButton(addTarget: #selector(resetGame))
     
     lazy var heightButtons: CGFloat = CGFloat(VStack.arrangedSubviews.count) * 110
-    lazy var buttons: [UIButton] = [button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button12, button13, button14, button15, button16]
+    lazy var buttons: [UIButton] = [button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14, button15, button16]
     lazy var emojis: [String] = []
     let emojisDB: [String] = halloween.emojis()
     
     var flipped2Cards: [UIButton] = []
     var score: Int = 0
+    var matchedPairs = 0
+    
+    weak var delegate: BoardViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -59,56 +73,56 @@ class BoardView: UIView {
     }
     
     @objc private func flipCardUp(_ button: UIButton) {
-        let transitionOptions: UIView.AnimationOptions = [.transitionFlipFromRight, .curveEaseInOut]
-        
-        UIView.transition(with: button, duration: 0.6, options: transitionOptions) {
-            button.backgroundColor = .white
-            button.setImage(nil, for: .normal)
-            button.setTitle(self.emojis[button.tag - 1], for: .normal)
-            button.layer.borderWidth = 2
-            button.layer.borderColor = DSColor.primaryColor.cgColor
-            button.isEnabled = false
-        }
-        flipped2Cards.append(button)
-        
-        if flipped2Cards.count == 2 {
-            checkForMatch()
-        }
+        delegate?.flipCardUp(button)
     }
     
     private func checkForMatch() {
-        flipped2Cards.first?.currentTitle == flipped2Cards.last?.currentTitle ? self.animateAlpha(alpha: 0) : flipCardDown()
-        flipped2Cards = []
+        delegate?.checkForMatch()
+    }
+    
+    private func isMatch() {
+        delegate?.isMatch()
+    }
+    
+    private func checkIfGameEnded() {
+        delegate?.checkIfGameEnded()
+    }
+    
+    private func isNotMatch() {
+        delegate?.isNotMatch()
     }
     
     private func flipCardDown() {
-        guard let firstCard = flipped2Cards.first, let secondCard = flipped2Cards.last else { return }
-        
-        let transitionOptions: UIView.AnimationOptions = [.transitionFlipFromLeft, .curveEaseInOut]
-        let image = UIImage(systemName: "swift")?.withTintColor(DSColor.secondaryColor, renderingMode: .alwaysOriginal) ?? UIImage()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            self.applyFlipTransition(for: firstCard, with: image, transitionOptions: transitionOptions)
-            self.applyFlipTransition(for: secondCard, with: image, transitionOptions: transitionOptions)
-        }
+        delegate?.flipCardDown()
     }
     
     private func applyFlipTransition(for card: UIButton, with image: UIImage, transitionOptions: UIView.AnimationOptions) {
-        UIView.transition(with: card, duration: 0.6, options: transitionOptions) {
-            card.backgroundColor = DSColor.primaryColor
-            card.setImage(UIImage(systemName: "swift")?.withTintColor(DSColor.secondaryColor, renderingMode: .alwaysOriginal), for: .normal)
-            card.setTitle("", for: .normal)
-            card.isEnabled = true
-        }
+        delegate?.applyFlipTransition(for: card, with: image, transitionOptions: transitionOptions)
     }
     
     private func animateAlpha(alpha: CGFloat) {
-        UIView.animate(withDuration: 1.5) {
-            UIView.animate(withDuration: 0.5) {
-                self.flipped2Cards.first?.alpha = alpha
-                self.flipped2Cards.last?.alpha = alpha
+        delegate?.animateAlpha(alpha: alpha)
+    }
+    
+    @objc private func resetGame() {
+        let transitionOptions: UIView.AnimationOptions = [.transitionCurlDown, .curveEaseInOut]
+        
+        for (_, button) in buttons.enumerated() {
+            UIView.transition(with: button, duration: 0.6, options: transitionOptions) {
+                button.setImage(UIImage(systemName: "swift")?.withTintColor(DSColor.secondaryColor, renderingMode: .alwaysOriginal), for: .normal)
+                button.setTitle("", for: .normal)
+                button.alpha = 1
+                button.isEnabled = true
+                button.backgroundColor = DSColor.primaryColor
             }
         }
+        flipped2Cards = []
+        emojis = []
+        score = 0
+        matchedPairs = 0
+        scoreLabel.text = "Pontos: 0"
+        shuffledEmojis()
+        resetButton.isHidden = true
     }
     
     private func setupView() {
