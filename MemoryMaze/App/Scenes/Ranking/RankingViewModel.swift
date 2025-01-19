@@ -1,3 +1,12 @@
+//
+//  RankingViewModel.swift
+//  MemoryMaze
+//
+//  Created by Diggo Silva on 19/01/25.
+//
+
+import Foundation
+
 class RankingViewModel {
     var rankingList: [Player] = [
         Player(name: "Jess", score: 440),
