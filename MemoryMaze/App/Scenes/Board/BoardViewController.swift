@@ -24,10 +24,42 @@ class BoardViewController: UIViewController {
     
     private func setNavBar() {
         title = "Jogo da Memória"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Ranking", style: .done, target: self, action: #selector(goToRanking))
+    }
+    
+    @objc private func goToRanking() {
+        let rankingVC = RankingViewController()
+        navigationController?.pushViewController(rankingVC, animated: true)
     }
     
     private func setDelegatesAndDataSources() {
         boardView.delegate = self
+    }
+    
+    private func registerScoreAlert() {
+        let alert = UIAlertController(title: "Parabéns!", message: "Digite seu nome para salvar seus pontos.", preferredStyle: .alert)
+        
+        alert.addTextField { textField in
+            textField.placeholder = "Digite seu nome"
+            textField.autocapitalizationType = .words
+        }
+
+        let ok = UIAlertAction(title: "Ok", style: .default) { action in
+            if let namePlayer = alert.textFields?.first?.text, !namePlayer.isEmpty {
+                print("Nome do jogador: \(namePlayer), Pontos: \(self.boardView.score)")
+                let rankingVC = RankingViewController()
+                self.navigationController?.pushViewController(rankingVC, animated: true)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    rankingVC.viewModel.rankingList.append(Player(name: namePlayer, score: self.boardView.score))
+                    rankingVC.rankingView.tableView.reloadData()
+                }
+                self.boardView.resetButton.isHidden = false
+            } else {
+                print("Nome do jogador: Não informado")
+            }
+        }
+        alert.addAction(ok)
+        present(alert, animated: true)
     }
 }
 
@@ -65,7 +97,7 @@ extension BoardViewController: BoardViewDelegate {
     
     func checkIfGameEnded() {
         if boardView.matchedPairs == boardView.totalButtons.count / 2 {
-            boardView.resetButton.isHidden = false
+            registerScoreAlert()
         } else {
             boardView.resetButton.isHidden = true
         }
