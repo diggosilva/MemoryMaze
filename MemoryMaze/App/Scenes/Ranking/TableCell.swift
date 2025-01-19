@@ -1,3 +1,12 @@
+//
+//  TableCell.swift
+//  MemoryMaze
+//
+//  Created by Diggo Silva on 19/01/25.
+//
+
+import UIKit
+
 class TableCell: UITableViewCell {
     
     static let identifier = "TableCell"
