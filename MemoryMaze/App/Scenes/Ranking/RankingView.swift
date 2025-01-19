@@ -1,3 +1,12 @@
+//
+//  RankingView.swift
+//  MemoryMaze
+//
+//  Created by Diggo Silva on 19/01/25.
+//
+
+import UIKit
+
 class RankingView: UIView {
     lazy var tableView: UITableView = {
         let tv = UITableView(frame: .zero, style: .insetGrouped)
