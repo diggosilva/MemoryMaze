@@ -64,7 +64,7 @@ extension BoardViewController: BoardViewDelegate {
     }
     
     func checkIfGameEnded() {
-        if boardView.matchedPairs == boardView.buttons.count / 2 {
+        if boardView.matchedPairs == boardView.totalButtons.count / 2 {
             boardView.resetButton.isHidden = false
         } else {
             boardView.resetButton.isHidden = true
@@ -105,5 +105,26 @@ extension BoardViewController: BoardViewDelegate {
                 self.boardView.flipped2Cards.last?.alpha = alpha
             }
         }
+    }
+    
+    func resetGame() {
+        let transitionOptions: UIView.AnimationOptions = [.transitionCurlDown, .curveEaseInOut]
+        
+        for (_, button) in boardView.totalButtons.enumerated() {
+            UIView.transition(with: button, duration: 0.6, options: transitionOptions) {
+                button.setImage(UIImage(systemName: "swift")?.withTintColor(DSColor.secondaryColor, renderingMode: .alwaysOriginal), for: .normal)
+                button.setTitle("", for: .normal)
+                button.alpha = 1
+                button.isEnabled = true
+                button.backgroundColor = DSColor.primaryColor
+            }
+        }
+        boardView.flipped2Cards = []
+        boardView.emojis = []
+        boardView.score = 0
+        boardView.matchedPairs = 0
+        boardView.scoreLabel.text = "Pontos: 0"
+        boardView.shuffledEmojis()
+        boardView.resetButton.isHidden = true
     }
 }
