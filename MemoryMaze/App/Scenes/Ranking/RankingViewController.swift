@@ -10,7 +10,7 @@ import UIKit
 class RankingViewController: UIViewController {
     
     let rankingView = RankingView()
-    let viewModel = RankingViewModel()
+    lazy var viewModel: RankingViewModelProtocol = RankingViewModel()
     
     override func loadView() {
         super.loadView()
@@ -21,15 +21,20 @@ class RankingViewController: UIViewController {
         super.viewDidLoad()
         setNavBar()
         setDelegatesAndDataSources()
+        loadPlayerList()
     }
     
     private func setNavBar() {
-        title = "Melhores pontuações"
+        title = "Top 6 melhores jogadores"
     }
     
     private func setDelegatesAndDataSources() {
         rankingView.tableView.delegate = self
         rankingView.tableView.dataSource = self
+    }
+    
+    private func loadPlayerList() {
+        viewModel.loadPlayerList()
         rankingView.tableView.reloadData()
     }
 }
