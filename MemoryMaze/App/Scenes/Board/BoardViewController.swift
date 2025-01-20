@@ -35,32 +35,6 @@ class BoardViewController: UIViewController {
     private func setDelegatesAndDataSources() {
         boardView.delegate = self
     }
-    
-    private func registerScoreAlert() {
-        let alert = UIAlertController(title: "Parabéns!", message: "Digite seu nome para salvar seus pontos.", preferredStyle: .alert)
-        
-        alert.addTextField { textField in
-            textField.placeholder = "Digite seu nome"
-            textField.autocapitalizationType = .words
-        }
-
-        let ok = UIAlertAction(title: "Ok", style: .default) { action in
-            if let namePlayer = alert.textFields?.first?.text, !namePlayer.isEmpty {
-                print("Nome do jogador: \(namePlayer), Pontos: \(self.boardView.score)")
-                let rankingVC = RankingViewController()
-                self.navigationController?.pushViewController(rankingVC, animated: true)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    rankingVC.viewModel.rankingList.append(Player(name: namePlayer, score: self.boardView.score))
-                    rankingVC.rankingView.tableView.reloadData()
-                }
-                self.boardView.resetButton.isHidden = false
-            } else {
-                print("Nome do jogador: Não informado")
-            }
-        }
-        alert.addAction(ok)
-        present(alert, animated: true)
-    }
 }
 
 extension BoardViewController: BoardViewDelegate {
@@ -158,5 +132,40 @@ extension BoardViewController: BoardViewDelegate {
         boardView.scoreLabel.text = "Pontos: 0"
         boardView.shuffledEmojis()
         boardView.resetButton.isHidden = true
+    }
+    
+    private func registerScoreAlert() {
+        let alert = UIAlertController(title: "Parabéns!", message: "Digite seu nome para salvar seus pontos.", preferredStyle: .alert)
+        
+        alert.addTextField { textField in
+            textField.placeholder = "Digite seu nome"
+            textField.autocapitalizationType = .words
+        }
+
+        let ok = UIAlertAction(title: "Ok", style: .default) { action in
+            if let namePlayer = alert.textFields?.first?.text, !namePlayer.trimmingCharacters(in: .whitespaces).isEmpty {
+                print("Nome do jogador: \(namePlayer), Pontos: \(self.boardView.score)")
+                let rankingVC = RankingViewController()
+                self.navigationController?.pushViewController(rankingVC, animated: true)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    rankingVC.viewModel.saveScorePlayer(name: namePlayer, score: self.boardView.score)
+                    rankingVC.rankingView.tableView.reloadData()
+                }
+                self.boardView.resetButton.isHidden = false
+            } else {
+                self.alert()
+            }
+        }
+        alert.addAction(ok)
+        present(alert, animated: true)
+    }
+    
+    private func alert() {
+        let alert = UIAlertController(title: "Atenção! ⚠️", message: "Digite seu nome para salvar seus pontos.", preferredStyle: .alert)
+        let ok = UIAlertAction(title: "Entendi", style: .default) { action in
+            self.registerScoreAlert()
+        }
+        alert.addAction(ok)
+        present(alert, animated: true)
     }
 }
