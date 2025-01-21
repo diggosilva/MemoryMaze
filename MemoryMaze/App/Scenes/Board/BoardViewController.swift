@@ -87,7 +87,7 @@ extension BoardViewController: BoardViewDelegate {
         guard let firstCard = boardView.flipped2Cards.first, let secondCard = boardView.flipped2Cards.last else { return }
         
         let transitionOptions: UIView.AnimationOptions = [.transitionFlipFromLeft, .curveEaseInOut]
-        let image = UIImage(systemName: "swift")?.withTintColor(DSColor.secondaryColor, renderingMode: .alwaysOriginal) ?? UIImage()
+        let image = DSImage.defaultImage ?? UIImage()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             self.applyFlipTransition(for: firstCard, with: image, transitionOptions: transitionOptions)
@@ -98,7 +98,7 @@ extension BoardViewController: BoardViewDelegate {
     func applyFlipTransition(for card: UIButton, with image: UIImage, transitionOptions: UIView.AnimationOptions) {
         UIView.transition(with: card, duration: 0.6, options: transitionOptions) {
             card.backgroundColor = DSColor.primaryColor
-            card.setImage(UIImage(systemName: "swift")?.withTintColor(DSColor.secondaryColor, renderingMode: .alwaysOriginal), for: .normal)
+            card.setImage(DSImage.defaultImage, for: .normal)
             card.setTitle("", for: .normal)
             card.isEnabled = true
         }
@@ -118,7 +118,7 @@ extension BoardViewController: BoardViewDelegate {
         
         for (_, button) in boardView.totalButtons.enumerated() {
             UIView.transition(with: button, duration: 0.6, options: transitionOptions) {
-                button.setImage(UIImage(systemName: "swift")?.withTintColor(DSColor.secondaryColor, renderingMode: .alwaysOriginal), for: .normal)
+                button.setImage(DSImage.defaultImage, for: .normal)
                 button.setTitle("", for: .normal)
                 button.alpha = 1
                 button.isEnabled = true
