@@ -16,7 +16,7 @@ extension UIView {
         let btn = UIButton(type: .system)
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.backgroundColor = DSColor.primaryColor
-        btn.setImage(UIImage(systemName: "swift")?.withTintColor(DSColor.secondaryColor, renderingMode: .alwaysOriginal), for: .normal)
+        btn.setImage(DSImage.defaultImage, for: .normal)
         btn.setTitle("", for: .normal)
         btn.titleLabel?.font = .systemFont(ofSize: 50)
         btn.tag = tag
@@ -60,7 +60,7 @@ extension UIView {
     func applyShadow(view: UIView) {
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOffset = CGSize(width: 5, height: 5)
-        view.layer.shadowOpacity = 0.5 // default 0.0
-        view.layer.shadowRadius = 5.0 // default 3.0
+        view.layer.shadowOpacity = 0.5
+        view.layer.shadowRadius = 5.0
     }
 }
