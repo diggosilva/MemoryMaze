@@ -14,7 +14,6 @@ class TableCell: UITableViewCell {
     lazy var imageGame: UIImageView = {
         let img = UIImageView()
         img.translatesAutoresizingMaskIntoConstraints = false
-        img.image = UIImage(systemName: "swift")?.withTintColor(DSColor.primaryColor, renderingMode: .alwaysOriginal)
         img.contentMode = .scaleAspectFit
         return img
     }()
