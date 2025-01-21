@@ -12,6 +12,9 @@ final class DSColor {
     static let secondaryColor = UIColor.systemBackground
 }
 
+final class DSImage {
+    static let defaultImage = UIImage(systemName: "swift")?.withTintColor(DSColor.secondaryColor, renderingMode: .alwaysOriginal)
+}
 
 enum Emojis {
     case natal([String])
